@@ -56,6 +56,7 @@ public class FFXTest {
         
         System.out.println(log);
         assertEquals(expResult, result);
+        assertEquals(X, instance.decrypt(aesKey, T, result, n, null));
     }
     
     @Test
@@ -74,6 +75,7 @@ public class FFXTest {
         
         System.out.println(log);
         assertEquals(expResult, result);
+        assertEquals(X, instance.decrypt(aesKey, T, result, n, null));
     }
     
     @Test
@@ -92,6 +94,7 @@ public class FFXTest {
         
         System.out.println(log);
         assertEquals(expResult, result);
+        assertEquals(X, instance.decrypt(aesKey, T, result, n, null));
     }
     
     @Test
@@ -110,6 +113,7 @@ public class FFXTest {
         
         System.out.println(log);
         assertEquals(expResult, result);
+        assertEquals(X, instance.decrypt(aesKey, T, result, n, null));
     }
 
     @Test

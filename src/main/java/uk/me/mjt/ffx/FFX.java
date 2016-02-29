@@ -61,6 +61,49 @@ public class FFX {
         return encrypted;
     }
     
+    BigInteger decrypt(byte[] aesKey, byte[] T, BigInteger Y, int n, StringBuilder log) {
+        int l = (n+1)/2;
+        BigInteger bMagnitude = BigInteger.TEN.pow(l);
+        BigInteger aMagnitude = BigInteger.TEN.pow(n-l);
+        
+        BigInteger[] split = Y.divideAndRemainder(bMagnitude);
+        
+        BigInteger A = split[0];
+        BigInteger B = split[1];
+        
+        int resultOffset = 0;
+        if (log != null) {
+            log.append(String.format("  Input (length = %d): \"%s\"\n\n", n, digits(Y,n)));
+            if (T.length==0) {
+                log.append("  No Tweak\n\n\n\n");
+            } else {
+                log.append(String.format("  Tweak (length = %d): \"%s\"\n\n\n\n", T.length, new String(T)));
+            }
+            resultOffset = log.length();
+            log.append("  Intermediate values:\n\n\n\n");
+        }
+        
+        for (int i=ROUNDS_TEN-1 ; i>=0 ; i--) {
+            BigInteger C = B;
+            BigInteger cMagnitude = bMagnitude;
+            B = A;
+            bMagnitude = aMagnitude;
+            A = C.subtract(Fk(n, T, i, B, aesKey, log)).mod(cMagnitude);
+            aMagnitude = cMagnitude;
+            if (log != null) {
+                log.append("    L = ").append(digits(A, l)).append(", R = ").append(digits(B, l)).append("\n\n\n\n");
+            }
+        }
+        
+        BigInteger decrypted = A.multiply(bMagnitude).add(B);
+        
+        if (log != null) {
+            log.insert(resultOffset, "  Decrypted: \""+decrypted+"\"\n\n\n\n");
+        }
+        
+        return decrypted;
+    }
+    
     BigInteger Fk(int n, byte[] T, int i, BigInteger B, byte[] aesKey, StringBuilder log) {
         int t = T.length;
         int β = (n+1)/2;
